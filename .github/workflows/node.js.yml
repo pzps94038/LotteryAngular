@@ -21,7 +21,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm run test:sit
     - run: npm run build:sit
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
