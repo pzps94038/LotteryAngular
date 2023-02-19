@@ -8,7 +8,8 @@
     "build": "ng build",
     "build:sit": "ng build --configuration sit",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:sit": "ng test --configuration sit"
   },
   "private": true,
   "dependencies": {
