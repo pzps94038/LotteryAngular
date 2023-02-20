@@ -1,3 +1,4 @@
+import { Web3SocketService } from './shared/web3-socket.service';
 import { Web3Service } from './shared/web3.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,10 +12,4 @@ import { Component } from '@angular/core';
   imports: [CommonModule, RouterModule]
 })
 export class AppComponent {
-  title = 'lottery';
-  constructor(
-    private web3: Web3Service
-  ){
-    this.web3.getManager().subscribe(console.warn);
-  }
 }

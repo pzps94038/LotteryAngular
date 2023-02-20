@@ -1,5 +1,6 @@
 import { AbiItem } from 'web3-utils';
 export const contractAddress: string = '0xBa7B0e6C2B0151DcB236A3EF9E1c177181aA211E';
+export const infruaWebSocketUrl = 'wss://goerli.infura.io/ws/v3/4f8732b887714942bb7981e66cea04e0';
 export const abi: AbiItem[] = [
   {
     constant: true,
