@@ -9,25 +9,48 @@
     </h3>
     <form class="p-12 md:p-24" [formGroup]="form" (ngSubmit)="submit()">
       <div>
+        <label for="account" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">選擇你的帳號</label>
+        <select
+          formControlName="account"
+          id="account"
+          [ngClass]="form.controls['account'].errors && form.controls['account'].touched ? 'border-red-600' : 'border-black'"
+          class="bg-gray-200 py-2  pl-2 focus:outline-none w-full my-2 rounded-sm border-2"
+          >
+          <option value="">--請選擇--</option>
+          <ng-container *ngIf="accounts$ | async as accounts">
+            <option *ngFor="let account of accounts" [value]="account">{{ account }}</option>
+          </ng-container>
+        </select>
+        <ng-container *ngIf="form.controls['account'].errors && form.controls['account'].touched">
+          <p *ngIf="form.controls['account'].errors?.['required']" class="text-red-600 w-full">此欄位必填</p>
+        </ng-container>
+      </div>
+      <div>
         <input
           formControlName="money"
           type="number"
           id="money"
-          [class.border-2]="form.controls['money'].errors && form.controls['money'].touched"
-          [class.border-red-600]="form.controls['money'].errors && form.controls['money'].touched"
-          class="bg-gray-200 pl-12 py-2 md:py-4 focus:outline-none w-full my-2"
-          placeholder="請輸入投注金額"
+          [ngClass]="form.controls['money'].errors && form.controls['money'].touched ? 'border-red-600' : 'border-black'"
+          class="bg-gray-200 py-2 pl-2 focus:outline-none w-full my-2 border-2"
+          placeholder="請輸入投注金額(Ether)"
         />
         <ng-container *ngIf="form.controls['money'].errors && form.controls['money'].touched">
           <p *ngIf="form.controls['money'].errors?.['required']" class="text-red-600 w-full">此欄位必填</p>
-          <p *ngIf="form.controls['money'].errors?.['min']" class="text-red-600 w-full">金額必須大於0</p>
+          <p *ngIf="form.controls['money'].errors?.['min']" class="text-red-600 w-full">金額必須大於或等於0.1</p>
         </ng-container>
       </div>
       <button
         *ngIf="currentTheme$ | async as currentTheme"
         [ngClass]="currentTheme"
+        type="submit"
         class="font-medium p-2 md:p-4 text-white uppercase w-full">
           投注
+      </button>
+      <button
+        (click)="pickWinner()"
+        type="button"
+        class="font-medium p-2 md:p-4 text-white uppercase w-full mt-2 bg-red-500">
+          抽取贏家!!
       </button>
     </form>
   </div>

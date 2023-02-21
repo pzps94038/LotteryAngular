@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { from, Observable, Subject } from 'rxjs';
+import { defaultIfEmpty, from, Observable } from 'rxjs';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
+declare const window: any;
 export abstract class Web3AbstractService {
   private _web3: Web3;
   private _contract: Contract;
@@ -18,7 +18,7 @@ export abstract class Web3AbstractService {
    * @returns
    */
   getAccounts() {
-    return from(this._web3.eth.getAccounts());
+    return from(window.ethereum.request({ method: "eth_requestAccounts" })).pipe(defaultIfEmpty([])) as Observable<string[]>;
   }
 
   /**
@@ -27,10 +27,12 @@ export abstract class Web3AbstractService {
    * @param value 買入多少
    * @returns
    */
-  enter(player: string, value: number) {
-    return this._contract.methods
+  enter(player: string, value: string) {
+    return from(
+      this._contract.methods
       .enter()
-      .send({ from: player, value }) as Observable<void>;
+      .send({ from: player, value: this.web3.utils.toWei(value, 'ether') })
+    ) as Observable<void>;
   }
 
   /**
