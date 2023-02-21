@@ -1,6 +1,6 @@
 import { Web3Service } from './../shared/services/web3.service';
 import { HeaderComponent } from './../shared/component/header/header.component';
-import { catchError, filter, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { catchError, filter, finalize, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { Web3SocketService } from '../shared/services/web3-socket.service';
@@ -23,6 +23,9 @@ export class HomeComponent implements OnDestroy {
     account: new FormControl('', [Validators.required]),
     money: new FormControl(0, [Validators.required, Validators.min(0.1)])
   });
+  submitLoading = false;
+  pickWinnerLoading = false;
+
 
   get money() {
     return this.form.get('money') as FormControl;
@@ -52,15 +55,24 @@ export class HomeComponent implements OnDestroy {
   submit() {
     this.form.markAllAsTouched();
     if(this.form.valid) {
+      this.submitLoading = true;
       this.web3.enter(this.account.value, this.money.value.toString()).pipe(
+        tap(()=> this.blance$ = this.web3.getBalance()),
+        finalize(()=> this.submitLoading = false),
         takeUntil(this._destroy$)
-      ).subscribe(res=> window.location.reload());
+      ).subscribe();
     }
   }
 
   pickWinner() {
-    this.web3.pickWinner(this.account.value).pipe(
-      takeUntil(this._destroy$)
-    ).subscribe(res=> window.location.reload());
+    this.account.markAllAsTouched();
+    if(this.account.valid) {
+      this.pickWinnerLoading = true;
+      this.web3.pickWinner(this.account.value).pipe(
+        tap(()=> this.blance$ = this.web3.getBalance()),
+        finalize(()=> this.pickWinnerLoading = false),
+        takeUntil(this._destroy$)
+      ).subscribe();
+    }
   }
 }
